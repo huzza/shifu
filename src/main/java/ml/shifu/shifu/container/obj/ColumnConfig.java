@@ -81,6 +81,11 @@ public class ColumnConfig {
      */
     private Boolean finalSelect = Boolean.FALSE;
 
+    /**
+     * This column is a segment column or not.
+     */
+    private Boolean isSegment = Boolean.FALSE;
+
     // in some hybrid threshold, some values like -100 is also category, try to set a threshold like 0, if value<0 would
     // be treated as categorical features, if not set, by default threshold is min double value, which means all value <
     // min can be set to categorical, which is all double value is not categorical, only works in Hybrid column type
@@ -165,6 +170,14 @@ public class ColumnConfig {
 
     public void setFinalSelect(Boolean finalSelect) {
         this.finalSelect = finalSelect;
+    }
+
+    public Boolean isSegment() {
+        return isSegment;
+    }
+
+    public void setSegment(Boolean isSegment) {
+        this.isSegment = isSegment;
     }
 
     public void setColumnName(String columnName) {
@@ -508,6 +521,7 @@ public class ColumnConfig {
         other.setColumnType(columnType);
         other.setColumnFlag(columnFlag);
         other.setFinalSelect(finalSelect);
+        other.setSegment(isSegment);
         other.setColumnStats(columnStats);
         other.setColumnBinning(columnBinning);
         // other.setCorrArray(corrArray);
@@ -568,6 +582,7 @@ public class ColumnConfig {
                 output.writeUTF(sampleValue);
             }
         }
+        output.writeBoolean(isSegment);
     }
 
     /**
@@ -593,5 +608,6 @@ public class ColumnConfig {
         for (int i = 0; i < size; i++) {
             sampleValues.add(input.readUTF());
         }
+        isSegment = input.readBoolean();
     }
 }

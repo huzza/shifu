@@ -432,8 +432,8 @@ public final class CommonUtils {
      * @throws IllegalArgumentException
      *             if {@code path} is null or empty, if sourceType is null.
      */
-    public static List<ColumnConfig> loadColumnConfigList(String path, SourceType sourceType, boolean nullSampleValues)
-            throws IOException {
+    public static synchronized List<ColumnConfig> loadColumnConfigList(String path, SourceType sourceType,
+            boolean nullSampleValues) throws IOException {
         ColumnConfig[] configList = loadJSON(path, sourceType, ColumnConfig[].class);
         List<ColumnConfig> columnConfigList = new ArrayList<ColumnConfig>();
         for(ColumnConfig columnConfig: configList) {
@@ -480,10 +480,7 @@ public final class CommonUtils {
             // NPE protection
             return columnName;
         }
-        return columnName.replaceAll("\\.", "_")
-                .replaceAll(" ", "_")
-                .replaceAll("/", "_")
-                .replaceAll("-", "_");
+        return columnName.replaceAll("\\.", "_").replaceAll(" ", "_").replaceAll("/", "_").replaceAll("-", "_");
     }
 
     /**
@@ -554,16 +551,15 @@ public final class CommonUtils {
                     evalConfig.getDataSet().getSource());
             if(evalConfig.isMultiTask()) {
                 List<String> tarColumns = evalConfig.getMultiTaskTargetColumnNames();
-                if (CollectionUtils.isNotEmpty(tarColumns)) {
-                    for(String column : tarColumns) {
+                if(CollectionUtils.isNotEmpty(tarColumns)) {
+                    for(String column: tarColumns) {
                         if(!StringUtils.join(fields, "").contains(column)) {
                             isSchemaProvided = false;
                             break;
                         }
                     }
                 }
-            } else if(StringUtils.join(fields, "").contains(
-                    modelConfig.getTargetColumnName(evalConfig, ""))) {
+            } else if(StringUtils.join(fields, "").contains(modelConfig.getTargetColumnName(evalConfig, ""))) {
                 // if first line contains target column name, we guess it is csv format and first line is header.
                 isSchemaProvided = true;
                 log.warn("No header path is provided, we will try to read first line and detect schema.");
@@ -656,7 +652,21 @@ public final class CommonUtils {
         } finally {
             IOUtils.closeQuietly(reader);
         }
+        return calculateHeaders(pigHeaderStr, delimiter, isFull);
+    }
 
+    /**
+     * Return header column array from header string.
+     *
+     * @param pigHeaderStr
+     *            header string
+     * @param delimiter
+     *            the delimiter of headers
+     * @param isFull
+     *            if full header name including name space
+     * @return headers array
+     */
+    public static String[] calculateHeaders(String pigHeaderStr, String delimiter, boolean isFull) {
         List<String> headerList = new ArrayList<String>();
         Set<String> headerSet = new HashSet<String>();
         int index = 0;
@@ -672,16 +682,34 @@ public final class CommonUtils {
              * columnName = getRelativePigHeaderColumnName(str);
              * }
              */
+            columnName = normColumnName(columnName);
             if(headerSet.contains(columnName)) {
-                columnName = columnName + "_" + index;
+                columnName = getUniqueName(headerSet, columnName + "_dup" + index);
             }
 
-            columnName = normColumnName(columnName);
             headerSet.add(columnName);
             index++;
             headerList.add(columnName);
         }
         return headerList.toArray(new String[0]);
+    }
+
+    /**
+     * Get the unique name.
+     *
+     * @return name if name set doesn't contains it. If name exist in name set, it will check name_1, name_2, name_n to
+     *         find one which doesn't
+     *         exist in the set.
+     */
+    public static String getUniqueName(Set<String> nameSet, String name) {
+        if(nameSet == null || name == null) {
+            return name;
+        }
+        String newName = name;
+        for(int i = 1; nameSet.contains(newName); i++) {
+            newName = name + "_" + i;
+        }
+        return newName;
     }
 
     /**
@@ -770,6 +798,29 @@ public final class CommonUtils {
         }
         List<String> headerList = new ArrayList<String>();
         for(String str: Splitter.on(delimiter).split(raw)) {
+            headerList.add(str);
+        }
+        return headerList;
+    }
+
+    /**
+     * Common split function to ignore special character like '|'.
+     *
+     * @param raw
+     *            raw string
+     * @param splitter
+     *            the splitter to split the string
+     * @return list of split Strings
+     * @throws IllegalArgumentException
+     *             {@code raw} and {@code splitter} is null or empty.
+     */
+    public static List<String> splitAndReturnList(String raw, Splitter splitter) {
+        if(StringUtils.isEmpty(raw) || splitter == null) {
+            throw new IllegalArgumentException(
+                    String.format("raw and delimeter should not be null or empty, raw:%s, splitter:%s", raw, splitter));
+        }
+        List<String> headerList = new ArrayList<String>();
+        for(String str: splitter.split(raw)) {
             headerList.add(str);
         }
         return headerList;
@@ -2005,4 +2056,16 @@ public final class CommonUtils {
         return result * (1d - result);
     }
 
+    /**
+     * Read the iterable into String array
+     * @param split - iterable of text elements
+     * @return - elements of text
+     */
+    public static String[] readIterableToArray(Iterable<String> split) {
+        List<String> fields = new ArrayList<>();
+        for (String str : split) {
+            fields.add(str);
+        }
+        return fields.toArray(new String[0]);
+    }
 }
