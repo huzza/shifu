@@ -23,6 +23,7 @@ import java.util.Map;
 import ml.shifu.shifu.container.WeightAmplifier;
 import ml.shifu.shifu.container.obj.ColumnConfig;
 import ml.shifu.shifu.container.obj.ModelConfig;
+import ml.shifu.shifu.container.obj.ModelNormalizeConf;
 import ml.shifu.shifu.core.DataSampler;
 import ml.shifu.shifu.core.Normalizer;
 import ml.shifu.shifu.message.NormPartRawDataMessage;
@@ -139,7 +140,9 @@ public class DataNormalizeWorker extends AbstractWorkerActor {
                 retDouList.add(null);
             } else {
                 String val = (rfs[i] == null) ? "" : rfs[i];
-                retDouList.addAll(Normalizer.normalize(config, val, cutoff, modelConfig.getNormalizeType()));
+                ModelNormalizeConf.NormType normType = (config.getColumnNormType() != null) ? config.getColumnNormType() :
+                        modelConfig.getNormalizeType();
+                retDouList.addAll(Normalizer.normalize(config, val, cutoff, normType));
             }
         }
 

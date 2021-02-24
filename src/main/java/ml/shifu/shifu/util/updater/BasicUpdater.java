@@ -161,6 +161,9 @@ public class BasicUpdater {
         if(this.categoricalColumnHashSeeds != null && this.categoricalColumnHashSeeds.containsKey(varName)) {
             columnConfig.setHashSeed(this.categoricalColumnHashSeeds.get(varName));
         }
+        if(columnConfig.getColumnNormType() == null) {
+            columnConfig.setColumnNormType(modelConfig.getNormalizeType());
+        }
     }
 
     public static BasicUpdater getUpdater(ModelConfig modelConfig, ModelInspector.ModelStep step, int mtlIndex)
