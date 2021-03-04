@@ -168,6 +168,10 @@
                 "name": "categoricalColumnNameFile",
                 "type" : "text",
                 "directive": "input"
+            }, {
+                "name": "multiNormColumnNameFile",
+                "type" : "text",
+                "directive": "input"
             }
         ]
     },

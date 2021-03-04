@@ -186,6 +186,7 @@ public interface Constants {
     public static final String DEFAULT_FORCEREMOVE_COLUMN_FILE = "forceremove.column.names";
     public static final String DEFAULT_CHAMPIONSCORE_META_COLUMN_FILE = "champion.score.column.names";
     public static final String DEFAULT_EXPRESSION_COLUMN_FILE = "filter.expressions";
+    public static final String DEFAULT_MULTI_NORM_COLUMN_FILE = "multi.norm.column.names";
 
     public static final String VAR_SEL_MASTER_CONDUCTOR = "dvarsel.master.conductor.cls";
     public static final String VAR_SEL_WORKER_CONDUCTOR = "dvarsel.worker.conductor.cls";

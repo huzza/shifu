@@ -13,6 +13,7 @@ import ml.shifu.shifu.column.NSColumnUtils;
 import ml.shifu.shifu.container.obj.ColumnConfig;
 import ml.shifu.shifu.container.obj.ColumnType;
 import ml.shifu.shifu.container.obj.ModelConfig;
+import ml.shifu.shifu.container.obj.ModelNormalizeConf;
 import ml.shifu.shifu.core.validator.ModelInspector;
 import ml.shifu.shifu.util.Constants;
 import ml.shifu.shifu.util.Environment;
@@ -45,6 +46,7 @@ public class BasicUpdater {
     protected Set<NSColumn> setHybridColumns;
     protected Map<String, Double> hybridColumnNames;
     protected Map<String, Integer> categoricalColumnHashSeeds;
+    protected Map<String, ModelNormalizeConf.NormType> multiNormColumns;
 
     private int mtlIndex = -1;
 
@@ -75,6 +77,7 @@ public class BasicUpdater {
                 this.setHybridColumns.add(new NSColumn(entry.getKey()));
             }
         }
+        this.multiNormColumns = modelConfig.getMultiNormColumns();
 
         this.setForceRemove = new HashSet<NSColumn>();
         if(Boolean.TRUE.equals(modelConfig.getVarSelect().getForceEnable())
@@ -165,7 +168,10 @@ public class BasicUpdater {
             columnConfig.setHashSeed(this.categoricalColumnHashSeeds.get(varName));
         }
         if(columnConfig.getColumnNormType() == null) {
-            columnConfig.setColumnNormType(modelConfig.getNormalizeType());
+            ModelNormalizeConf.NormType normType = (this.multiNormColumns.get(varName) != null) ?
+                    this.multiNormColumns.get(varName) :
+                    modelConfig.getNormalizeType();
+            columnConfig.setColumnNormType(normType);
         }
     }
 
