@@ -200,8 +200,8 @@ public final class CommonUtils {
         if(StringUtils.isNotBlank(modelConfig.getDataSet().getSegExpressionFile())) {
             hdfs.copyFromLocalFile(new Path(modelConfig.getDataSet().getSegExpressionFile()), colFilePath);
         }
-        if(StringUtils.isNotBlank(modelConfig.getDataSet().getMultiNormColumnNameFile())) {
-            hdfs.copyFromLocalFile(new Path(modelConfig.getDataSet().getMultiNormColumnNameFile()), colFilePath);
+        if(StringUtils.isNotBlank(modelConfig.getNormalize().getMultiNormColumnNameFile())) {
+            hdfs.copyFromLocalFile(new Path(modelConfig.getNormalize().getMultiNormColumnNameFile()), colFilePath);
         }
     }
 

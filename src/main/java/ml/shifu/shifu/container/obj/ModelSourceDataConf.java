@@ -65,7 +65,6 @@ public class ModelSourceDataConf extends RawSourceData {
     /**
      * File path for adding Multi Normalization for columns
      */
-    private String multiNormColumnNameFile;
 
     public String getCategoricalHashSeedConfFile() {
 		return categoricalHashSeedConfFile;
@@ -81,12 +80,6 @@ public class ModelSourceDataConf extends RawSourceData {
 
     public void setCategoricalColumnNameFile(String categoricalColumnNameFile) {
         this.categoricalColumnNameFile = categoricalColumnNameFile;
-    }
-
-    public String getMultiNormColumnNameFile() { return multiNormColumnNameFile; }
-
-    public void setMultiNormColumnNameFile(String multiNormColumnNameFile) {
-        this.multiNormColumnNameFile = multiNormColumnNameFile;
     }
 
     public String getValidationDataPath() {
@@ -168,7 +161,6 @@ public class ModelSourceDataConf extends RawSourceData {
         other.setHybridColumnNameFile(this.hybridColumnNameFile);
         other.setSegExpressionFile(this.segExpressionFile);
         other.setMetaColumnNameFile(this.getMetaColumnNameFile());
-        other.setMultiNormColumnNameFile(this.multiNormColumnNameFile);
 
         return other;
     }

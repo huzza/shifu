@@ -168,10 +168,6 @@
                 "name": "categoricalColumnNameFile",
                 "type" : "text",
                 "directive": "input"
-            }, {
-                "name": "multiNormColumnNameFile",
-                "type" : "text",
-                "directive": "input"
             }
         ]
     },
@@ -471,6 +467,11 @@
                 "directive": "checkbox",
                 "defval" : false
             }, {
+                "name": "multiNormColumnNameFile",
+                "type" : "text",
+                "directive": "input"
+            },
+            {
                 "name": "params",
                 "type": "map",
                 "directive": "input",

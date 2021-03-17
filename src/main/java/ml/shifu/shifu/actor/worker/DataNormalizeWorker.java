@@ -140,9 +140,7 @@ public class DataNormalizeWorker extends AbstractWorkerActor {
                 retDouList.add(null);
             } else {
                 String val = (rfs[i] == null) ? "" : rfs[i];
-                ModelNormalizeConf.NormType normType = (config.getColumnNormType() != null) ? config.getColumnNormType() :
-                        modelConfig.getNormalizeType();
-                retDouList.addAll(Normalizer.normalize(config, val, cutoff, normType));
+                retDouList.addAll(Normalizer.normalize(config, val, cutoff, modelConfig.getNormalizeType()));
             }
         }
 

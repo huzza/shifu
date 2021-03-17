@@ -244,16 +244,17 @@ public class ModelConfig {
                 Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE)
                         .toString(),
                 SourceType.LOCAL);
-        dataSet.setMultiNormColumnNameFile(
-                Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE);
-        modelConfig.setDataSet(dataSet);
 
         // build stats info
         modelConfig.setStats(new ModelStatsConf());
         modelConfig.setBinningAlgorithm(BinningAlgorithm.SPDTI);
 
         // build normalize info
-        modelConfig.setNormalize(new ModelNormalizeConf());
+        ModelNormalizeConf normalize = new ModelNormalizeConf();
+        normalize.setMultiNormColumnNameFile(
+                Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE);
+        modelConfig.setDataSet(dataSet);
+        modelConfig.setNormalize(normalize);
 
         // build varselect info
         ModelVarSelectConf varselect = new ModelVarSelectConf();
@@ -953,18 +954,15 @@ public class ModelConfig {
         String delimiter = StringUtils.isBlank(this.getHeaderDelimiter()) ? this.getDataSetDelimiter()
                 : this.getHeaderDelimiter();
 
-        String multiNormColumnNameFile = dataSet.getMultiNormColumnNameFile();
+        String multiNormColumnNameFile = normalize.getMultiNormColumnNameFile();
         if(StringUtils.isBlank(multiNormColumnNameFile)) {
             String defaultMultiNormColumnNameFile = Constants.COLUMN_META_FOLDER_NAME + File.separator
                     + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE;
             if(ShifuFileUtils.isFileExists(defaultMultiNormColumnNameFile, SourceType.LOCAL)) {
                 multiNormColumnNameFile = defaultMultiNormColumnNameFile;
-                LOG.warn(
-                        "'dataSet::multiNormColumnNameFile' is not set while default multiNormColumnNameFile: {} is found, default multi norm file will be used.",
-                        defaultMultiNormColumnNameFile);
             } else {
                 LOG.warn(
-                        "'dataSet::multiNormColumnNameFile' is not set and default multiNormColumnNameFile: {} is not found, no additional norm would be applied.",
+                        "'normalize::multiNormColumnNameFile' is not set and default multiNormColumnNameFile: {} is not found, no additional norm would be applied.",
                         defaultMultiNormColumnNameFile);
                 return new HashMap<String, NormType>();
             }
@@ -982,12 +980,12 @@ public class ModelConfig {
                 }
                 catch (IllegalArgumentException e) {
                     LOG.warn(
-                            "'dataSet::multiNormColumnNameFile' should have a valid normalization type as a second argument"
+                            "'normalize::multiNormColumnNameFile' should have a valid normalization type as a second argument"
                     );
                 }
             } else {
                 LOG.warn(
-                        "'dataSet::multiNormColumnNameFile' should contain column name and normalization type delimited by {}", delimiter
+                        "'normalize::multiNormColumnNameFile' should contain column name and normalization type delimited by {}", delimiter
                 );
             }
         }
