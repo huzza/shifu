@@ -232,7 +232,8 @@ public class Normalizer {
      */
     public static List<Double> normalize(ColumnConfig config, Object raw, Double cutoff,
             ModelNormalizeConf.NormType type, CategoryMissingNormType categoryMissingNormType) {
-        switch(type) {
+        ModelNormalizeConf.NormType normType = (config.getColumnNormType() != null) ? config.getColumnNormType() : type;
+        switch(normType) {
             case ASIS_WOE:
                 return asIsNormalize(config, raw, true);
             case ASIS_PR:

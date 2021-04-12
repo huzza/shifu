@@ -18,6 +18,7 @@ package ml.shifu.shifu.container.obj;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ml.shifu.shifu.util.Constants;
+import ml.shifu.shifu.container.obj.ModelNormalizeConf.NormType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -59,6 +60,12 @@ public class ColumnConfig {
      * Numerical or Categorical feature.
      */
     private ColumnType columnType = ColumnType.N;
+
+
+    /**
+     * Normalization type for Column
+     */
+    private NormType columnNormType = null;
 
     /**
      * Meta, target, weight, force-select or force-remove columns
@@ -141,6 +148,12 @@ public class ColumnConfig {
 
     public void setColumnType(ColumnType columnType) {
         this.columnType = columnType;
+    }
+
+    public NormType getColumnNormType() { return columnNormType; }
+
+    public void setColumnNormType(NormType columnNormType) {
+        this.columnNormType = columnNormType;
     }
 
     public ColumnFlag getColumnFlag() {

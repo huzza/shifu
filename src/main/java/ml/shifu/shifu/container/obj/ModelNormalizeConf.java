@@ -98,6 +98,8 @@ public class ModelNormalizeConf {
      */
     private Boolean isParquet = Boolean.FALSE;
 
+    private String multiNormColumnNameFile;
+
     public Double getStdDevCutOff() {
         return stdDevCutOff;
     }
@@ -154,6 +156,12 @@ public class ModelNormalizeConf {
         this.isParquet = isParquet;
     }
 
+    public String getMultiNormColumnNameFile() { return multiNormColumnNameFile; }
+
+    public void setMultiNormColumnNameFile(String multiNormColumnNameFile) {
+        this.multiNormColumnNameFile = multiNormColumnNameFile;
+    }
+
     @Override
     public ModelNormalizeConf clone() {
         ModelNormalizeConf other = new ModelNormalizeConf();
@@ -162,6 +170,7 @@ public class ModelNormalizeConf {
         other.setSampleNegOnly(sampleNegOnly);
         other.setStdDevCutOff(stdDevCutOff);
         other.setIsParquet(isParquet);
+        other.setMultiNormColumnNameFile(this.multiNormColumnNameFile);
         // other.setCorrelation(correlation);
         return other;
     }

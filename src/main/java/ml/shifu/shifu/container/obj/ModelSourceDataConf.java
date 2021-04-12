@@ -62,6 +62,10 @@ public class ModelSourceDataConf extends RawSourceData {
     
     private String categoricalHashSeedConfFile;
 
+    /**
+     * File path for adding Multi Normalization for columns
+     */
+
     public String getCategoricalHashSeedConfFile() {
 		return categoricalHashSeedConfFile;
 	}

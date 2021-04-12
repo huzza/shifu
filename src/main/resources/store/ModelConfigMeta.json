@@ -467,6 +467,32 @@
                 "type": "boolean",
                 "directive": "checkbox",
                 "defval" : false
+            }, {
+                "name": "multiNormColumnNameFile",
+                "type" : "text",
+                "directive": "input"
+            },
+            {
+                "name": "params",
+                "type": "map",
+                "directive": "input",
+                "element": [
+                    {
+                        "name" : "extraNormColumns",
+                        "type" : "text",
+                        "directive": "input"
+                    },
+                    {
+                        "name" : "embeddingMethod",
+                        "type" : "text",
+                        "directive": "select",
+                        "defval" : "DSQR",
+                        "options": [
+                            {"label":"DoubleSquareRoot", "value":"DSQR"},
+                            {"label":"CappedEmbeddingSize", "value":"CES"}
+                        ]
+                    }
+                ]
             }
         ]
     }, {

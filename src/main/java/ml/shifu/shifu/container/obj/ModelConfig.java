@@ -240,13 +240,22 @@ public class ModelConfig {
         dataSet.setCategoricalColumnNameFile(
                 Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_CATEGORICAL_COLUMN_FILE);
         modelConfig.setDataSet(dataSet);
+        // create empty <ModelName>/multi.norm.column.names
+        ShifuFileUtils.createFileIfNotExists(new Path(modelName,
+                Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE)
+                        .toString(),
+                SourceType.LOCAL);
 
         // build stats info
         modelConfig.setStats(new ModelStatsConf());
         modelConfig.setBinningAlgorithm(BinningAlgorithm.SPDTI);
 
         // build normalize info
-        modelConfig.setNormalize(new ModelNormalizeConf());
+        ModelNormalizeConf normalize = new ModelNormalizeConf();
+        normalize.setMultiNormColumnNameFile(
+                Constants.COLUMN_META_FOLDER_NAME + File.separator + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE);
+        modelConfig.setDataSet(dataSet);
+        modelConfig.setNormalize(normalize);
 
         // build varselect info
         ModelVarSelectConf varselect = new ModelVarSelectConf();
@@ -943,6 +952,49 @@ public class ModelConfig {
                 }
             } else {
                 map.put(string, Double.NEGATIVE_INFINITY);
+            }
+        }
+        return map;
+    }
+
+    @JsonIgnore
+    public Map<String, NormType> getMultiNormColumns() throws IOException {
+        String delimiter = StringUtils.isBlank(this.getHeaderDelimiter()) ? this.getDataSetDelimiter()
+                : this.getHeaderDelimiter();
+
+        String multiNormColumnNameFile = normalize.getMultiNormColumnNameFile();
+        if(StringUtils.isBlank(multiNormColumnNameFile)) {
+            String defaultMultiNormColumnNameFile = Constants.COLUMN_META_FOLDER_NAME + File.separator
+                    + Constants.DEFAULT_MULTI_NORM_COLUMN_FILE;
+            if(ShifuFileUtils.isFileExists(defaultMultiNormColumnNameFile, SourceType.LOCAL)) {
+                multiNormColumnNameFile = defaultMultiNormColumnNameFile;
+            } else {
+                LOG.warn(
+                        "'normalize::multiNormColumnNameFile' is not set and default multiNormColumnNameFile: {} is not found, no additional norm would be applied.",
+                        defaultMultiNormColumnNameFile);
+                return new HashMap<String, NormType>();
+            }
+        }
+        List<String> list = CommonUtils.readConfFileIntoList(multiNormColumnNameFile, SourceType.LOCAL);
+        Map<String, NormType> map = new HashMap<String, NormType>();
+        for(String string: list) {
+            if(string.contains(Constants.DEFAULT_DELIMITER)) {
+                String[] splits = CommonUtils.split(string, Constants.DEFAULT_DELIMITER);
+                String columnName = splits[0];
+                String normTypeStr = splits[1];
+                try {
+                    NormType normType = NormType.valueOf(normTypeStr);
+                    map.put(columnName, normType);
+                }
+                catch (IllegalArgumentException e) {
+                    LOG.warn(
+                            "'normalize::multiNormColumnNameFile' should have a valid normalization type as a second argument"
+                    );
+                }
+            } else {
+                LOG.warn(
+                        "'normalize::multiNormColumnNameFile' should contain column name and normalization type delimited by {}", delimiter
+                );
             }
         }
         return map;
